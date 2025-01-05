@@ -2,7 +2,7 @@ FROM openjdk:21
 
 WORKDIR /app
 
-COPY api-gateway/build/libs/*.jar app.jar
+COPY build/libs/*.jar app.jar
 
 EXPOSE 8080
 
