@@ -1,10 +1,7 @@
 package de.example.multiplservicesconsul;
 
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.DefaultResponse;
-import org.springframework.cloud.client.loadbalancer.EmptyResponse;
-import org.springframework.cloud.client.loadbalancer.Request;
-import org.springframework.cloud.client.loadbalancer.Response;
+import org.springframework.cloud.client.loadbalancer.*;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import reactor.core.publisher.Mono;
@@ -35,10 +32,10 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                         return new EmptyResponse();
                     }
 
-                    if (request instanceof GatewayLoadBalancerRequest lbRequest) {
-                        var exchange = lbRequest.getContext();
+                    if (request.getContext() instanceof RequestDataContext lbRequest) {
+                        var clientRequest = lbRequest.getClientRequest();
+                        String path = clientRequest.getUrl().getPath();
 
-                        String path = exchange.getRequest().getURI().getPath();
                         ServiceInstance chosen = pickBasedOnPathOrAttribute(serviceInstances, path);
 
                         return new DefaultResponse(chosen);
@@ -51,19 +48,19 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
     private ServiceInstance pickBasedOnPathOrAttribute(
             List<ServiceInstance> serviceInstances, String path) {
         List<ServiceInstance> filteredInstances;
-        int idx;
+        AtomicInteger counter;
 
         if (path != null && path.startsWith("/api/")) {
-            var moduleServicePrefix = path.split("/")[1];
+            var moduleServicePrefix = path.split("/")[2];
             filteredInstances = serviceInstances.stream().filter(serviceInstance -> serviceInstance.getMetadata().get("profile").contains(moduleServicePrefix)).toList();
-            var counter = moduleRRCounter.getOrDefault(moduleServicePrefix, new AtomicInteger(0));
+            counter = moduleRRCounter.getOrDefault(moduleServicePrefix, new AtomicInteger(0));
             moduleRRCounter.put(moduleServicePrefix, counter);
-            idx = counter.getAndIncrement() % filteredInstances.size();
         } else {
             filteredInstances = serviceInstances;
-            idx = generalRRCounter.getAndIncrement() % filteredInstances.size();
+            counter = generalRRCounter;
         }
 
+        int idx = counter.getAndIncrement() % filteredInstances.size();
         return filteredInstances.get(idx);
     }
 }
