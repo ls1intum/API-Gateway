@@ -3,6 +3,11 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      routes:
+        - id: artemis
+          uri: lb://ARTEMIS
+          predicates:
+            - Path=/api/**
       discovery:
         locator:
           enabled: true
