@@ -10,14 +10,16 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
     private final ServiceInstanceListSupplier serviceInstanceListSupplier;
 
-    // One could consider having a RR-counter per profile
-    private final AtomicInteger roundRobinCounter = new AtomicInteger(0);
+    private final AtomicInteger generalRRCounter = new AtomicInteger(0);
+    private final Map<String, AtomicInteger> moduleRRCounter = new ConcurrentHashMap<>();
 
     public CustomLoadBalancer(ServiceInstanceListSupplier serviceInstanceListSupplier) {
         this.serviceInstanceListSupplier = serviceInstanceListSupplier;
@@ -49,15 +51,19 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
     private ServiceInstance pickBasedOnPathOrAttribute(
             List<ServiceInstance> serviceInstances, String path) {
         List<ServiceInstance> filteredInstances;
+        int idx;
 
         if (path != null && path.startsWith("/api/")) {
             var moduleServicePrefix = path.split("/")[1];
             filteredInstances = serviceInstances.stream().filter(serviceInstance -> serviceInstance.getMetadata().get("profile").contains(moduleServicePrefix)).toList();
+            var counter = moduleRRCounter.getOrDefault(moduleServicePrefix, new AtomicInteger(0));
+            moduleRRCounter.put(moduleServicePrefix, counter);
+            idx = counter.getAndIncrement() % filteredInstances.size();
         } else {
             filteredInstances = serviceInstances;
+            idx = generalRRCounter.getAndIncrement() % filteredInstances.size();
         }
 
-        int idx = roundRobinCounter.getAndIncrement() % filteredInstances.size();
         return filteredInstances.get(idx);
     }
 }
