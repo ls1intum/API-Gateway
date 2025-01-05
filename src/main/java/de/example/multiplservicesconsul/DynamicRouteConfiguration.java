@@ -2,64 +2,79 @@ package de.example.multiplservicesconsul;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
+import org.springframework.cloud.gateway.discovery.DiscoveryClientRouteDefinitionLocator;
+import org.springframework.cloud.gateway.discovery.DiscoveryLocatorProperties;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
-import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.support.NameUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Flux;
 
 import java.net.URI;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-@Configuration
+// ToDo: Think if even required or could be hardcoded
+// @Configuration
 public class DynamicRouteConfiguration {
 
     private final ReactiveDiscoveryClient reactiveDiscoveryClient;
 
-    private final GatewayProperties gatewayProperties;
+    private final DiscoveryLocatorProperties discoveryLocatorProperties;
 
-    public DynamicRouteConfiguration(ReactiveDiscoveryClient reactiveDiscoveryClient, GatewayProperties gatewayProperties) {
+    public DynamicRouteConfiguration(ReactiveDiscoveryClient reactiveDiscoveryClient, DiscoveryLocatorProperties discoveryLocatorProperties) {
         this.reactiveDiscoveryClient = reactiveDiscoveryClient;
-        this.gatewayProperties = gatewayProperties;
+        this.discoveryLocatorProperties = discoveryLocatorProperties;
     }
 
     @Bean
     public RouteDefinitionLocator dynamicRouteDefinitionLocator() {
-        return () -> {
-            return reactiveDiscoveryClient.getServices()
-                    .flatMap(serviceId -> reactiveDiscoveryClient.getInstances(serviceId)
-                            .mapNotNull(instance -> buildRouteDefinition(serviceId, instance))
-                    )
-                    .filter(Objects::nonNull);
-        };
+        DiscoveryClientRouteDefinitionLocator defaultLocator =
+                new DiscoveryClientRouteDefinitionLocator(reactiveDiscoveryClient, discoveryLocatorProperties);
+
+        Flux<RouteDefinition> customFlux = reactiveDiscoveryClient.getServices()
+                .flatMap(serviceId -> reactiveDiscoveryClient.getInstances(serviceId)
+                        .flatMapIterable(instance -> buildRouteDefinitions(serviceId, instance)));
+
+        return () -> Flux.merge(
+                defaultLocator.getRouteDefinitions(),
+                customFlux
+        );
     }
 
-    private RouteDefinition buildRouteDefinition(String serviceId, ServiceInstance instance) {
-        // Check metadata for certain tags/profiles
+    private List<RouteDefinition> buildRouteDefinitions(String serviceId, ServiceInstance instance) {
         Map<String, String> metadata = instance.getMetadata();
 
-        // For example, if your instance has `metadata.profile = "text"`
-        if (metadata.containsKey("profile")) {
-            String profile = metadata.get("profile");
-
-            // Build a route that matches /<profile>/** and points to lb://<serviceId>
-            RouteDefinition rd = new RouteDefinition();
-            rd.setId(serviceId + "-" + profile);
-            rd.setUri(URI.create("lb://" + serviceId));
-
-            // Create a Path predicate
-            PredicateDefinition pathPredicate = new PredicateDefinition();
-            pathPredicate.setName("Path");
-            pathPredicate.addArg(NameUtils.generateName(0), "/" + profile + "/**");
-
-            rd.getPredicates().add(pathPredicate);
-            return rd;
+        // If there's no 'profile' key, return an empty list
+        if (!metadata.containsKey("profile")) {
+            return Collections.emptyList();
         }
 
-        // If we don't want a route for this instance, return null (or do something else)
-        return null;
+        // Suppose 'profile' is a comma-separated list, e.g. "text,quiz"
+        String profileString = metadata.get("profile");
+        String[] profiles = profileString.split(",");
+
+        List<RouteDefinition> routeDefinitions = new ArrayList<>();
+
+        for (String rawProfile : profiles) {
+            String profile = rawProfile.trim();
+            if (!profile.isEmpty()) {
+                // Build a route for this particular profile
+                RouteDefinition rd = new RouteDefinition();
+                rd.setId(serviceId + "-" + profile);
+                rd.setUri(URI.create("lb://" + serviceId));
+
+                // Create a Path predicate for "/profile/**"
+                PredicateDefinition pathPredicate = new PredicateDefinition();
+                pathPredicate.setName("Path");
+                pathPredicate.addArg(NameUtils.generateName(0), "/api/" + profile + "/**");
+
+                rd.getPredicates().add(pathPredicate);
+                routeDefinitions.add(rd);
+            }
+        }
+        return routeDefinitions;
     }
+
 }
