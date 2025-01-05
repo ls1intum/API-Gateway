@@ -16,6 +16,7 @@ services:
       - "8081:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=text,quiz
+      - ARTEMIS_INSTANCE_NAME=artemis-1
     networks:
       - app-network
   artemis-2:
@@ -26,6 +27,7 @@ services:
       - "8082:8082"
     environment:
       - SPRING_PROFILES_ACTIVE=quiz
+      - ARTEMIS_INSTANCE_NAME=artemis-2
     networks:
       - app-network
   jhipster-registry:
