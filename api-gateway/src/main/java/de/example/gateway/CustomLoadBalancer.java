@@ -24,7 +24,6 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
     @Override
     public Mono<Response<ServiceInstance>> choose(Request request) {
-        var now = System.nanoTime();
         return serviceInstanceListSupplier
                 .get()
                 .next()
@@ -38,7 +37,6 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                         String path = clientRequest.getUrl().getPath();
 
                         ServiceInstance chosen = pickBasedOnPathOrAttribute(serviceInstances, path);
-                        System.out.println("Time taken: " + (System.nanoTime() - now) + "ns");
 
                         return new DefaultResponse(chosen);
                     } else {
