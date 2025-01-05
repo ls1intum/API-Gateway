@@ -40,4 +40,5 @@ To overcome this, `ServiceInstance#pickBasedOnPathOrAttribute()` performs simple
 ### Minor Details
 
 - The [CustomLoadBalancerConfig.java](api-gateway/src/main/java/de/example/api-gateway/CustomLoadBalancerConfig.java) is just used to enable the `CustomLoadBalancer` for the `ARTEMIS`-services.
+- Each Artemis instance could have their own endpoint /profiles to show their active profiles. With this, the client is unaware of whether calling the gateway or the service directly.
 - Performance should be non-critical. In case it is, we could consider caching the service instances (to module mapping) for a certain amount of time.
