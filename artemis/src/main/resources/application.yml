@@ -6,9 +6,6 @@ spring:
     name: artemis
 
 eureka:
-  instance:
-    metadataMap:
-      profile: text,quiz
   client:
     serviceUrl:
       defaultZone: http://admin:admin@jhipster-registry:8761/eureka/
