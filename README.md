@@ -21,6 +21,7 @@ See that the two Artemis services have different Spring Profiles enabled.
 5. Access the functionality of the QuizController by calling [/api/quiz](http://localhost:8080/api/quiz) in your browser. This is provided by both artemis instances.
 6. Verify that there is a response and by spamming the requests, the response changes (different instance name).
 7. Repeat the same for [/api/quiz](http://localhost:8080/api/text). However, here, only `artemis-1` should be part of the response string as only this service has enabled this profile.
+8. Open [/profiles](http://localhost:8080/profiles) to see the active Artemis profiles of the API-Gateway (cluster-aggregated).
 
 **Note**: If you see a 503 response, you might just need to wait a little bit more until the API gateway has fetched the available service instances from Jhipster Registry.
 
