@@ -17,6 +17,14 @@ services:
       - SPRING_PROFILES_ACTIVE=text,quiz
     networks:
       - app-network
+  artemis-2:
+    build:
+      context: .
+      dockerfile: artemis/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=quiz
     networks:
       - app-network
   jhipster-registry:
