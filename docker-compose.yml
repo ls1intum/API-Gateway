@@ -1,31 +1,27 @@
-version: '3.8'
 services:
-  consul:
-    image: consul:1.15.3
-    container_name: consul
-    ports:
-      - "8500:8500"
-    command: "agent -dev -client=0.0.0.0"
-    networks:
-      - app-network
-    environment:
-      CONSUL_BIND_INTERFACE: eth0
-
-  app:
+  api-gateway:
     build:
       context: .
-    container_name: spring-boot-app
+    container_name: api-gateway
     ports:
       - "8080:8080"
-    environment:
-      - SPRING_APPLICATION_NAME=spring-boot-app
-      - SPRING_CLOUD_CONSUL_HOST=consul
-      - SPRING_CLOUD_CONSUL_PORT=8500
-      - SPRING_PROFILES_ACTIVE=default
     networks:
       - app-network
-    depends_on:
-      - consul
+  artemis:
+    build:
+      context: .
+      dockerfile: artemis/Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+  jhipster-registry:
+    image: jhipster/jhipster-registry
+    container_name: jhipster-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - app-network
 
 networks:
   app-network:

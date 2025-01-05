@@ -1,0 +1,14 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: artemis
+
+eureka:
+  instance:
+    metadataMap:
+      profile: text,quiz
+  client:
+    serviceUrl:
+      defaultZone: http://admin:admin@jhipster-registry:8761/eureka/

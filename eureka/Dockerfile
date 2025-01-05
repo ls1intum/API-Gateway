@@ -1,8 +1,8 @@
-FROM openjdk:21
+FROM openjdk:21-jdk-alpine
 
 WORKDIR /app
 
-COPY build/libs/*.jar app.jar
+COPY eureka/build/libs/*.jar app.jar
 
 EXPOSE 8080
 

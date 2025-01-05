@@ -1,9 +1,22 @@
 spring:
   application:
-    name: main-service
+    name: api-gateway
   cloud:
-    consul:
-      host: localhost # Consul agent host
-      port: 8500      # Consul agent port
-      # discovery:
-        # enabled: true # Enable service discovery
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://admin:admin@jhipster-registry:8761/eureka/
+    # instance:
+      #preferIpAddress: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      access: unrestricted
