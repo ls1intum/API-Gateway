@@ -1,4 +1,4 @@
-package de.example.multiplservicesconsul;
+package de.example.gateway;
 
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;

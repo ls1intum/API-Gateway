@@ -1,4 +1,4 @@
-package de.example.multiplservicesconsul;
+package de.example.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

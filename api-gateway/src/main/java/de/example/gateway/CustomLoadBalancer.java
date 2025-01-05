@@ -1,4 +1,4 @@
-package de.example.multiplservicesconsul;
+package de.example.gateway;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.*;
