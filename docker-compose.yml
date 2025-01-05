@@ -7,12 +7,16 @@ services:
       - "8080:8080"
     networks:
       - app-network
-  artemis:
+  artemis-1:
     build:
       context: .
       dockerfile: artemis/Dockerfile
     ports:
       - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=text,quiz
+    networks:
+      - app-network
     networks:
       - app-network
   jhipster-registry:
