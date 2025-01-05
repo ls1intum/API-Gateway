@@ -24,6 +24,7 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
     @Override
     public Mono<Response<ServiceInstance>> choose(Request request) {
+        var now = System.nanoTime();
         return serviceInstanceListSupplier
                 .get()
                 .next()
@@ -37,6 +38,7 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                         String path = clientRequest.getUrl().getPath();
 
                         ServiceInstance chosen = pickBasedOnPathOrAttribute(serviceInstances, path);
+                        System.out.println("Time taken: " + (System.nanoTime() - now) + "ns");
 
                         return new DefaultResponse(chosen);
                     } else {
@@ -60,7 +62,15 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             counter = generalRRCounter;
         }
 
-        int idx = counter.getAndIncrement() % filteredInstances.size();
+        // reset the counter if it reaches Integer.MAX_VALUE
+        // both thread-safe and faster than synchonized blocks
+        int idx = counter.getAndUpdate(current -> {
+            if (current >= Integer.MAX_VALUE - filteredInstances.size()) {
+                return 0;
+            } else {
+                return current + 1;
+            }
+        }) % filteredInstances.size();
         return filteredInstances.get(idx);
     }
 }

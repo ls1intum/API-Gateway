@@ -12,8 +12,6 @@ services:
     build:
       context: ./artemis
       dockerfile: Dockerfile
-    ports:
-      - "8081:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=text,quiz
       - ARTEMIS_INSTANCE_NAME=artemis-1
@@ -23,11 +21,81 @@ services:
     build:
       context: ./artemis
       dockerfile: Dockerfile
-    ports:
-      - "8082:8082"
     environment:
       - SPRING_PROFILES_ACTIVE=quiz
       - ARTEMIS_INSTANCE_NAME=artemis-2
+    networks:
+      - app-network
+  artemis-3:
+    build:
+      context: ./artemis
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=quiz,assessment,athena,atlas,buildagent,core,exam,exercise,feedback,lecture,programming,quiz,solution,student,team,version-control
+      - ARTEMIS_INSTANCE_NAME=artemis-3
+    networks:
+      - app-network
+  artemis-4:
+    build:
+      context: ./artemis
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=quiz,assessment,athena,atlas,buildagent,core,exam,exercise,feedback,lecture,programming,quiz,solution,student,team,version-control
+      - ARTEMIS_INSTANCE_NAME=artemis-4
+    networks:
+      - app-network
+  artemis-5:
+    build:
+      context: ./artemis
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=quiz,assessment,athena,atlas,buildagent,core,exam,exercise,feedback,lecture,programming,quiz,solution,student,team,version-control
+      - ARTEMIS_INSTANCE_NAME=artemis-5
+    networks:
+      - app-network
+  artemis-6:
+    build:
+      context: ./artemis
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=text,quiz
+      - ARTEMIS_INSTANCE_NAME=artemis-6
+    networks:
+      - app-network
+  artemis-7:
+    build:
+      context: ./artemis
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=quiz
+      - ARTEMIS_INSTANCE_NAME=artemis-7
+    networks:
+      - app-network
+  artemis-8:
+    build:
+      context: ./artemis
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=quiz,assessment,athena,atlas,buildagent,core,exam,exercise,feedback,lecture,programming,quiz,solution,student,team,version-control
+      - ARTEMIS_INSTANCE_NAME=artemis-8
+    networks:
+      - app-network
+  artemis-9:
+    build:
+      context: ./artemis
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=quiz,assessment,athena,atlas,buildagent,core,exam,exercise,feedback,lecture,programming,quiz,solution,student,team,version-control
+      - ARTEMIS_INSTANCE_NAME=artemis-9
+    networks:
+      - app-network
+  artemis-10:
+    build:
+      context: ./artemis
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=quiz,assessment,athena,atlas,buildagent,core,exam,exercise,feedback,lecture,programming,quiz,solution,student,team,version-control
+      - ARTEMIS_INSTANCE_NAME=artemis-10
     networks:
       - app-network
   jhipster-registry:
