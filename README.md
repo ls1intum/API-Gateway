@@ -55,7 +55,10 @@ To overcome this, we can pass the `EUREKA_INSTANCE_IP_ADDRESS` environment varia
 
 For instance, `artemis-1` has `EUREKA_INSTANCE_IP_ADDRESS=host.docker.internal` which causes the service to register with the host's "IP address" (it's rather a hostname but that's irrelevant here).
 
-Apart from that, the port is also determined automatically.
+The port is determined by the `server.port` property in the `application.yml` file (or default 8080).
+Since this might differ from the host port the docker container is attached to, one has to pass the `EUREKA_INSTANCE_NON_SECURE_PORT` environment variable to the service.
+This is only required if the host port differs from the container port, but could be set in any case.
+Note that the term `unsecure` refers to the fact that it's not an HTTPS port, but rather HTTP - the proxy already does TLS termination.
 
 Then, you can call [/api/text](http://localhost:8080/api/text) and [/api/quiz](http://localhost:8080/api/quiz) to see that artemis-1 also responds.
 
