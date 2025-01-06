@@ -37,8 +37,28 @@ It uses the Spring Profiles to decide where to route the request based on the pa
 This will override the default behavior of round-robin load-balancing.
 To overcome this, `ServiceInstance#pickBasedOnPathOrAttribute()` performs simple round-robin based on a general (1) and a per-module (2) round-robin counter.
 
+### Service Discovery
+
+#### Java-Process Setup
+
+When running the Artemis services as Java processes, these will use the IP address of their VM to register at the JHipster registry. 
+This address is routable by other VMs.
+The port is also determined automatically.
+
+#### Docker Setup
+
+When using Docker to run the Artemis nodes, we need to make some smaller adjustments.
+When the service registers at the registry, it does so with the docker containers ip address.
+While this is routable within the same docker network (i.e. compose setup), this does not work for a distributed docker environment where the services are running on different machines.
+
+To overcome this, we can pass the `EUREKA_INSTANCE_IP_ADDRESS` environment variable to the service. This will then be used to register the service at the registry.
+
+For instance, `artemis-1` has `EUREKA_INSTANCE_IP_ADDRESS=host.docker.internal` which causes the service to register with the host's "IP address" (it's rather a hostname but that's irrelevant here).
+
+Apart from that, the port is also determined automatically.
+
 ### Minor Details
 
-- The [CustomLoadBalancerConfig.java](api-gateway/src/main/java/de/example/api-gateway/CustomLoadBalancerConfig.java) is just used to enable the `CustomLoadBalancer` for the `ARTEMIS`-services.
+- The [CustomLoadBalancerConfig.java](api-gateway/src/main/java/de/example/gateway/CustomLoadBalancerConfig.java) is just used to enable the `CustomLoadBalancer` for the `ARTEMIS`-services.
 - Each Artemis instance could have their own endpoint /profiles to show their active profiles. With this, the client is unaware of whether calling the gateway or the service directly.
 - Performance should be non-critical. In case it is, we could consider caching the service instances (to module mapping) for a certain amount of time.
