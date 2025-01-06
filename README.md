@@ -57,6 +57,8 @@ For instance, `artemis-1` has `EUREKA_INSTANCE_IP_ADDRESS=host.docker.internal` 
 
 Apart from that, the port is also determined automatically.
 
+Then, you can call [/api/text](http://localhost:8080/api/text) and [/api/quiz](http://localhost:8080/api/quiz) to see that artemis-1 also responds.
+
 ### Minor Details
 
 - The [CustomLoadBalancerConfig.java](api-gateway/src/main/java/de/example/gateway/CustomLoadBalancerConfig.java) is just used to enable the `CustomLoadBalancer` for the `ARTEMIS`-services.
