@@ -11,6 +11,17 @@ spring:
       discovery:
         locator:
           enabled: true
+
+custom-routing:
+  profileMetadataKey: profile # the name of the property that holds a comma-separated list of active profiles
+  profile-mappings:
+    # Defines which active profile an instance has to receive requests for /api/<map-value>/**
+    nonDefaultProfilesByPrefix:
+      atlas: atlas
+      text: text
+    # Defines which active profile an instance has to have to receive all requests for path that did not match any prefix
+    defaultProfile: core
+
 eureka:
   client:
     serviceUrl:

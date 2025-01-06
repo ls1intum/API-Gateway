@@ -1,5 +1,6 @@
 package de.example.gateway;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.*;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
@@ -18,7 +19,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
+    @Value("${custom-routing.profileMetadataKey}")
+    private String profileMetadataKey;
+
     private final ServiceInstanceListSupplier serviceInstanceListSupplier;
+
+    private final ProfilePathStore profilePathStore;
 
     /**
      * Round-robin counter for general requests (not starting with /api/**).
@@ -28,12 +34,13 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
     /**
      * Round-robin counters for requests starting with /api/**.
-     * The key is the module prefix extracted from the path.
+     * The key is the respective Spring Profile mapped from the path.
      */
     private final Map<String, AtomicInteger> moduleRRCounter = new ConcurrentHashMap<>();
 
-    public CustomLoadBalancer(ServiceInstanceListSupplier serviceInstanceListSupplier) {
+    public CustomLoadBalancer(ServiceInstanceListSupplier serviceInstanceListSupplier, ProfilePathStore profilePathStore) {
         this.serviceInstanceListSupplier = serviceInstanceListSupplier;
+        this.profilePathStore = profilePathStore;
     }
 
     @Override
@@ -67,11 +74,11 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
         List<ServiceInstance> filteredInstances;
         AtomicInteger counter;
 
-        if (path != null && path.startsWith("/api/")) {
-            var moduleServicePrefix = path.split("/")[2];
-            filteredInstances = serviceInstances.stream().filter(serviceInstance -> serviceInstance.getMetadata().get("profile").contains(moduleServicePrefix)).toList();
-            counter = moduleRRCounter.getOrDefault(moduleServicePrefix, new AtomicInteger(0));
-            moduleRRCounter.put(moduleServicePrefix, counter);
+        var requiredProfile = profilePathStore.getProfileByPath(path);
+        if (requiredProfile != null) {
+            filteredInstances = serviceInstances.stream().filter(serviceInstance -> serviceInstance.getMetadata().getOrDefault(profileMetadataKey, "").contains(requiredProfile)).toList();
+            counter = moduleRRCounter.getOrDefault(requiredProfile, new AtomicInteger(0));
+            moduleRRCounter.put(requiredProfile, counter);
         } else {
             // This is a safeguard and should never happen
             filteredInstances = serviceInstances;

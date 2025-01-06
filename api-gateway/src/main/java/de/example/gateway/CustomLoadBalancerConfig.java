@@ -15,10 +15,12 @@ import static de.example.gateway.Constants.ARTEMIS_SERVICE_NAME;
 public class CustomLoadBalancerConfig {
     @Bean
     public ReactorServiceInstanceLoadBalancer customLoadBalancer(
-            LoadBalancerClientFactory factory
+            LoadBalancerClientFactory factory,
+            ProfilePathStore profilePathStore
     ) {
         return new CustomLoadBalancer(
-                factory.getLazyProvider(ARTEMIS_SERVICE_ID, ServiceInstanceListSupplier.class).getObject()
+                factory.getLazyProvider(ARTEMIS_SERVICE_ID, ServiceInstanceListSupplier.class).getObject(),
+                profilePathStore
         );
     }
 }

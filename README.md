@@ -37,6 +37,11 @@ It uses the Spring Profiles to decide where to route the request based on the pa
 This will override the default behavior of round-robin load-balancing.
 To overcome this, `ServiceInstance#pickBasedOnPathOrAttribute()` performs simple round-robin based on a general (1) and a per-module (2) round-robin counter.
 
+### Path to Profile Mappings
+
+When receiving a request, the load balancer will match the path prefix to the respective Spring profile.
+To do so, it uses the [ProfilePathStore.java](api-gateway/src/main/java/de/example/gateway/ProfilePathStore.java) which reads a mapping from the `application.yml` file.
+
 ### Service Discovery
 
 #### Java-Process Setup
