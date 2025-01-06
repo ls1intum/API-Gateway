@@ -31,7 +31,7 @@ See that the two Artemis services have different Spring Profiles enabled.
 
 Since all artemis instances have the same service name ("ARTEMIS"), we need to decide for each request where to route.
 
-This is what the [CustomLoadBalancer.java](api-gateway/src/main/java/de/example/api-gateway/CustomLoadBalancer.java) does. 
+This is what the [CustomLoadBalancer.java](api-gateway/src/main/java/de/example/gateway/CustomLoadBalancer.java) does. 
 It uses the Spring Profiles to decide where to route the request based on the path prefix.
 
 This will override the default behavior of round-robin load-balancing.
