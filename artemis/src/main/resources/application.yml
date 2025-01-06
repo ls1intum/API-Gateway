@@ -6,6 +6,8 @@ spring:
     name: artemis
 
 eureka:
+  instance:
+    preferIpAddress: true
   client:
     serviceUrl:
       defaultZone: http://admin:admin@jhipster-registry:8761/eureka/

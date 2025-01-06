@@ -15,6 +15,9 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=text,quiz
       - ARTEMIS_INSTANCE_NAME=artemis-1
+      - EUREKA_INSTANCE_IP_ADDRESS=host.docker.internal # VM-IP in distributed setup
+    ports:
+        - "8081:8081"
     networks:
       - app-network
   artemis-2:
