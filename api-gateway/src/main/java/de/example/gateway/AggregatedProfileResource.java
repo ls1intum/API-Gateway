@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static de.example.gateway.Constants.ARTEMIS_SERVICE_ID;
+
 @RestController
 public class AggregatedProfileResource {
 
@@ -23,7 +25,7 @@ public class AggregatedProfileResource {
 
     @GetMapping("/profiles")
     public Set<String> activatedProfiles() {
-        var serviceInstances = discoveryClient.getInstances("artemis");
+        var serviceInstances = discoveryClient.getInstances(ARTEMIS_SERVICE_ID);
 
         return serviceInstances.stream()
                 .flatMap(serviceInstance -> Arrays.stream(serviceInstance.getMetadata().get("profile").split(",")))
