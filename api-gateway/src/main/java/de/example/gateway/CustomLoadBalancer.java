@@ -58,6 +58,9 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                     String path = clientRequest.getUrl().getPath();
 
                     ServiceInstance chosen = pickBasedOnPath(serviceInstances, path);
+                    if (chosen == null) {
+                        return new EmptyResponse();
+                    }
 
                     return new DefaultResponse(chosen);
                 } else {
@@ -83,6 +86,10 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             // This is a safeguard and should never happen
             filteredInstances = serviceInstances;
             counter = generalRRCounter;
+        }
+
+        if (filteredInstances.isEmpty()) {
+            return null;
         }
 
         return selectRoundRobin(filteredInstances, counter);
