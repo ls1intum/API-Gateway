@@ -39,8 +39,3 @@ management:
   endpoint:
     gateway:
       access: unrestricted
-
-#logging:
-#  level:
-#    org.springframework.cloud.gateway: DEBUG
-#    org.springframework.cloud.loadbalancer: DEBUG
