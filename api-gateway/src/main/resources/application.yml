@@ -25,9 +25,9 @@ custom-routing:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://admin:admin@jhipster-registry:8761/eureka/
     # instance:
       #preferIpAddress: true
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-"http://admin:admin@localhost:8761/eureka/"}
 management:
   endpoints:
     web:
