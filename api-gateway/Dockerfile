@@ -1,4 +1,6 @@
-FROM openjdk:21
+
+ARG BUILDPLATFORM=linux/arm64
+FROM --platform=$BUILDPLATFORM openjdk:21
 
 WORKDIR /app
 
