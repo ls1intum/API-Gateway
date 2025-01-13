@@ -36,7 +36,9 @@ jobs:
         run: echo "DOCKER_REPO=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' | tr -d '[:punct:]' | tr -d '[:space:]')" >> $GITHUB_ENV
 
       - name: Build application
-        run: ./gradlew clean build
+        run: |
+          cd api-gateway
+          ./gradlew clean build
 
       - name: Build and Push Docker Image
         run: |
