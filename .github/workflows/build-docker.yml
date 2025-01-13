@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  java: 21
+
 jobs:
   docker-build:
     runs-on: self-hosted
@@ -13,6 +16,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '${{ env.java }}'
+          cache: 'gradle'
 
       - name: Build application
         run: |
