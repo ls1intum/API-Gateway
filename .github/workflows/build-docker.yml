@@ -32,11 +32,15 @@ jobs:
       - name: Get short commit hash for Docker tag
         run: echo "TAG=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
 
+      - name: Get sanitized repository name
+        run: echo "DOCKER_REPO=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]' | tr -d '[:punct:]' | tr -d '[:space:]')" >> $GITHUB_ENV
+
       - name: Build and Push Docker Image
         run: |
+          cd api-gateway
           docker buildx build \
             --platform linux/amd64 \
             --build-arg BUILDPLATFORM=linux/amd64 \
-            --tag ghcr.io/${{ github.repository }}:${{ env.TAG }} \
-            --tag ghcr.io/${{ github.repository }}:latest \
+            --tag ghcr.io/${{ env.DOCKER_REPO }}:${{ env.TAG }} \
+            --tag ghcr.io/${{ env.DOCKER_REPO }}:latest \
             --push .
