@@ -31,4 +31,10 @@ public class AggregatedProfileResource {
                 .flatMap(serviceInstance -> Arrays.stream(serviceInstance.getMetadata().get("profile").split(",")))
                 .collect(Collectors.toSet());
     }
+
+    @GetMapping("/services")
+    public List<String> services() {
+        discoveryClient.probe();
+        return discoveryClient.getServices();
+    }
 }
