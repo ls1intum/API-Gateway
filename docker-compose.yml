@@ -8,6 +8,8 @@ services:
       - "8080:8080"
     networks:
       - app-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://admin:admin@jhipster-registry:8761/eureka/"
   artemis-1:
     build:
       context: ./artemis
