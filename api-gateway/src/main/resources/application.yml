@@ -11,6 +11,11 @@ spring:
       discovery:
         locator:
           enabled: true
+      httpclient:
+        pool:
+          max-connections: 500
+          acquire-timeout: 1000
+        response-timeout: 5s
 
 custom-routing:
   profileMetadataKey: profile # the name of the property that holds a comma-separated list of active profiles
