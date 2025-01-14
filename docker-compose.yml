@@ -62,6 +62,8 @@ services:
   jhipster-registry:
     image: jhipster/jhipster-registry
     container_name: jhipster-registry
+    environment:
+        - XDG_CONFIG_HOME=/tmp/.config
     ports:
       - "8761:8761"
     networks:
