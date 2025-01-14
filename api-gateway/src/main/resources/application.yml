@@ -40,7 +40,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: "gateway"  # Only expose the 'gateway' endpoint
+        include: "health,gateway,prometheus"
   endpoint:
     gateway:
+      access: unrestricted
+    prometheus:
       access: unrestricted
