@@ -33,7 +33,7 @@ public class LoadBalancerConfig {
     HttpClientCustomizer http3HttpClientCustomizer() {
         return httpClient ->
             httpClient
-                .protocol(HttpProtocol.HTTP3)
+                .protocol(HttpProtocol.H2C)
                 .http3Settings(spec -> spec.idleTimeout(Duration.ofSeconds(5))
                         .maxData(10_000_000)
                         .maxStreamDataBidirectionalLocal(1_000_000));
