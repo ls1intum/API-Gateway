@@ -15,7 +15,10 @@ spring:
         pool:
           max-connections: 500
           acquire-timeout: 1000
-        response-timeout: 5s
+        # same value as nginx proxy timeout in artemis config. Debatable, if such a timeout really makes sense.
+        # In particular, when having high load, one should DECREASE the timeout to a reasonable value
+        # to allow "recovering" from long-running requests
+        response-timeout: 900s
 
 custom-routing:
   profileMetadataKey: profile # the name of the property that holds a comma-separated list of active profiles
