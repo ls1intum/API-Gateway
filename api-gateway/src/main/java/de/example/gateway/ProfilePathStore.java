@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public class ProfilePathStore {
     /**
      * The mapping from path prefix to profile.
      */
-    private Map<String, String> nonDefaultProfilesByPrefix;
+    private Map<String, String> nonDefaultProfilesByPrefix = new HashMap<>();
 
     /**
      * Returns the profile to use for the given path.
