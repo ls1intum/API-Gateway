@@ -1,6 +1,7 @@
 package de.example.gateway;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
@@ -25,11 +26,11 @@ public class AggregatedProfileResource {
 
     @GetMapping("/profiles")
     public Set<String> activatedProfiles() {
-        var serviceInstances = discoveryClient.getInstances(ARTEMIS_SERVICE_ID);
+        List<ServiceInstance> serviceInstances = discoveryClient.getInstances(ARTEMIS_SERVICE_ID);
 
         return serviceInstances.stream()
-                .flatMap(serviceInstance -> Arrays.stream(serviceInstance.getMetadata().get("profile").split(",")))
-                .collect(Collectors.toSet());
+            .flatMap(serviceInstance -> Arrays.stream(serviceInstance.getMetadata().get("profile").split(",")))
+            .collect(Collectors.toSet());
     }
 
     @GetMapping("/services")

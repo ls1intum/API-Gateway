@@ -54,7 +54,7 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                 }
 
                 if (request.getContext() instanceof RequestDataContext lbRequest) {
-                    var clientRequest = lbRequest.getClientRequest();
+                    RequestData clientRequest = lbRequest.getClientRequest();
                     String path = clientRequest.getUrl().getPath();
 
                     ServiceInstance chosen = pickBasedOnPath(serviceInstances, path);
@@ -77,7 +77,7 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
         List<ServiceInstance> filteredInstances;
         AtomicInteger counter;
 
-        var requiredProfile = profilePathStore.getProfileByPath(path);
+        String requiredProfile = profilePathStore.getProfileByPath(path);
         if (requiredProfile != null) {
             filteredInstances = serviceInstances.stream().filter(serviceInstance -> serviceInstance.getMetadata().getOrDefault(profileMetadataKey, "").contains(requiredProfile)).toList();
             counter = moduleRRCounter.getOrDefault(requiredProfile, new AtomicInteger(0));
