@@ -27,8 +27,8 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
     private final ProfilePathStore profilePathStore;
 
     /**
-     * Round-robin counter for general requests (not starting with /api/**).
-     * In theory, this should never be used, as all requests should start with /api/**.
+     * Round-robin counter for requests not starting with "/api/".
+     * For instance, this is used for requests to the client or for websocket messages.
      */
     private final AtomicInteger generalRRCounter = new AtomicInteger(0);
 
@@ -83,7 +83,6 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             counter = moduleRRCounter.getOrDefault(requiredProfile, new AtomicInteger(0));
             moduleRRCounter.put(requiredProfile, counter);
         } else {
-            // This is a safeguard and should never happen
             filteredInstances = serviceInstances;
             counter = generalRRCounter;
         }

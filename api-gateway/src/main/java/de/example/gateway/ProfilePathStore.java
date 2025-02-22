@@ -23,6 +23,11 @@ public class ProfilePathStore {
      */
     private Map<String, String> nonDefaultProfilesByPrefix;
 
+    /**
+     * Returns the profile to use for the given path.
+     * @param path The path to get the profile for.
+     * @return The profile to use for the given path or null if no mapping is found.
+     */
     @Nullable
     public String getProfileByPath(String path) {
         if (path == null || !path.startsWith("/api/")) {
