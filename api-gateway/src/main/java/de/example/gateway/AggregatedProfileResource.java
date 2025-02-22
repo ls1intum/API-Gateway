@@ -24,6 +24,10 @@ public class AggregatedProfileResource {
         this.discoveryClient = discoveryClient;
     }
 
+    /**
+     * Returns the set of activated profiles for the Artemis service instances.
+     * Aggregated across the profiles of all registered instances.
+     */
     @GetMapping("/profiles")
     public Set<String> activatedProfiles() {
         List<ServiceInstance> serviceInstances = discoveryClient.getInstances(ARTEMIS_SERVICE_ID);
@@ -33,6 +37,9 @@ public class AggregatedProfileResource {
             .collect(Collectors.toSet());
     }
 
+    /**
+     * Returns the list of services registered with the discovery client.
+     */
     @GetMapping("/services")
     public List<String> services() {
         discoveryClient.probe();
