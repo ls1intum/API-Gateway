@@ -24,9 +24,8 @@ custom-routing:
   profileMetadataKey: profile # the name of the property that holds a comma-separated list of active profiles
   profile-mappings:
     # Defines which active profile an instance has to receive requests for /api/<map-value>/**
-    nonDefaultProfilesByPrefix:
-      atlas: atlas
-      text: text
+    nonDefaultProfilesByPrefix: []
+      # atlas: atlas
     # Defines which active profile an instance has to have to receive all requests for path that did not match any prefix
     defaultProfile: core
 
