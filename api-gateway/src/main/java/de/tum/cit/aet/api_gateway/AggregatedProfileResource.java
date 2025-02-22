@@ -1,4 +1,4 @@
-package de.example.gateway;
+package de.tum.cit.aet.api_gateway;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static de.example.gateway.Constants.ARTEMIS_SERVICE_ID;
+import static de.tum.cit.aet.api_gateway.Constants.ARTEMIS_SERVICE_ID;
 
 @RestController
 public class AggregatedProfileResource {

@@ -1,4 +1,4 @@
-package de.example.gateway;
+package de.tum.cit.aet.api_gateway;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;

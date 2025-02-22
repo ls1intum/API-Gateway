@@ -1,4 +1,4 @@
-package de.example.gateway;
+package de.tum.cit.aet.api_gateway;
 
 public class Constants {
 
