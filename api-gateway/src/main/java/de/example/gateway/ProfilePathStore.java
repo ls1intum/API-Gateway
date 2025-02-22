@@ -34,7 +34,12 @@ public class ProfilePathStore {
             return null;
         }
 
-        var moduleServicePrefix = path.split("/")[2];
+        String[] slugs = path.split("/");
+        if (slugs.length < 3) {
+            return null;
+        }
+
+        String moduleServicePrefix = slugs[2];
         return nonDefaultProfilesByPrefix.getOrDefault(moduleServicePrefix, defaultProfile);
     }
 
