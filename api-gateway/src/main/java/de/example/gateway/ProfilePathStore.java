@@ -51,4 +51,8 @@ public class ProfilePathStore {
     public void setNonDefaultProfilesByPrefix(Map<String, String> nonDefaultProfilesByPrefix) {
         this.nonDefaultProfilesByPrefix = nonDefaultProfilesByPrefix;
     }
+
+    public String getDefaultProfile() {
+        return defaultProfile;
+    }
 }

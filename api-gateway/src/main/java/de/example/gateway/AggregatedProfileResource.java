@@ -1,10 +1,7 @@
 package de.example.gateway;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +17,11 @@ public class AggregatedProfileResource {
 
     private final DiscoveryClient discoveryClient;
 
-    public AggregatedProfileResource(DiscoveryClient discoveryClient) {
+    private final ProfilePathStore profilePathStore;
+
+    public AggregatedProfileResource(DiscoveryClient discoveryClient, ProfilePathStore profilePathStore) {
         this.discoveryClient = discoveryClient;
+        this.profilePathStore = profilePathStore;
     }
 
     /**
@@ -33,7 +33,7 @@ public class AggregatedProfileResource {
         List<ServiceInstance> serviceInstances = discoveryClient.getInstances(ARTEMIS_SERVICE_ID);
 
         return serviceInstances.stream()
-            .flatMap(serviceInstance -> Arrays.stream(serviceInstance.getMetadata().get("profile").split(",")))
+            .flatMap(serviceInstance -> Arrays.stream(serviceInstance.getMetadata().get(profilePathStore.getDefaultProfile()).split(",")))
             .collect(Collectors.toSet());
     }
 
