@@ -41,7 +41,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: "gateway"  # Only expose the 'gateway' endpoint
-  endpoint:
-    gateway:
-      access: unrestricted
+        include: "gateway"
+  # uncomment in case you want to access information regarding the gateway (routes) under /actuator/gateway
+  # otherwise, the endpoint is NOT exposed at all
+  # endpoint:
+    # gateway:
+      # access: unrestricted
