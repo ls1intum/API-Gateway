@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,15 +22,25 @@ public class ProfilePathStore {
     /**
      * The mapping from path prefix to profile.
      */
-    private Map<String, String> nonDefaultProfilesByPrefix;
+    private Map<String, String> nonDefaultProfilesByPrefix = new HashMap<>();
 
+    /**
+     * Returns the profile to use for the given path.
+     * @param path The path to get the profile for.
+     * @return The profile to use for the given path or null if no mapping is found.
+     */
     @Nullable
     public String getProfileByPath(String path) {
         if (path == null || !path.startsWith("/api/")) {
             return null;
         }
 
-        var moduleServicePrefix = path.split("/")[2];
+        String[] slugs = path.split("/");
+        if (slugs.length < 3) {
+            return null;
+        }
+
+        String moduleServicePrefix = slugs[2];
         return nonDefaultProfilesByPrefix.getOrDefault(moduleServicePrefix, defaultProfile);
     }
 
@@ -39,5 +50,9 @@ public class ProfilePathStore {
 
     public void setNonDefaultProfilesByPrefix(Map<String, String> nonDefaultProfilesByPrefix) {
         this.nonDefaultProfilesByPrefix = nonDefaultProfilesByPrefix;
+    }
+
+    public String getDefaultProfile() {
+        return defaultProfile;
     }
 }

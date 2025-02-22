@@ -24,16 +24,14 @@ custom-routing:
   profileMetadataKey: profile # the name of the property that holds a comma-separated list of active profiles
   profile-mappings:
     # Defines which active profile an instance has to receive requests for /api/<map-value>/**
-    nonDefaultProfilesByPrefix:
-      atlas: atlas
-      text: text
+    # nonDefaultProfilesByPrefix:
+      # atlas: atlas
     # Defines which active profile an instance has to have to receive all requests for path that did not match any prefix
     defaultProfile: core
 
 eureka:
   client:
     serviceUrl:
-      # Only defining the URL via env (without changes in application.yml) does not work
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:-"http://admin:admin@localhost:8761/eureka/"}
     enabled: true
   instance:
@@ -43,7 +41,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: "gateway"  # Only expose the 'gateway' endpoint
-  endpoint:
-    gateway:
-      access: unrestricted
+        include: "gateway"
+  # uncomment in case you want to access information regarding the gateway (routes) under /actuator/gateway
+  # otherwise, the endpoint is NOT exposed at all
+  # endpoint:
+    # gateway:
+      # access: unrestricted
