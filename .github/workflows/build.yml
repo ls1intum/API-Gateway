@@ -59,3 +59,24 @@ jobs:
             --tag ghcr.io/${{ env.DOCKER_REPO }}:${{ env.TAG }} \
             --tag ghcr.io/${{ env.DOCKER_REPO }}:latest \
             --push .
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.gateway_war_version }}
+          release_name: "${{ env.TAG }}"
+          draft: false
+          prerelease: false
+
+      - name: Upload WAR asset to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./api-gateway/build/libs/*.war
+          asset_name: Gateway.war
+          asset_content_type: application/java-archive
