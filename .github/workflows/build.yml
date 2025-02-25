@@ -27,7 +27,7 @@ jobs:
       - name: Build application
         run: |
           cd api-gateway
-          ./gradlew clean build
+          ./gradlew clean bootWar
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
