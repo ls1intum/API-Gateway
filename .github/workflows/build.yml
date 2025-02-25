@@ -10,7 +10,7 @@ env:
   java: 21
 
 jobs:
-  docker-build:
+  build-and-release:
     runs-on: self-hosted
 
     steps:
