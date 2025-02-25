@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Release
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   java: 21
 
 jobs:
-  docker-build:
+  build-and-release:
     runs-on: self-hosted
 
     steps:
@@ -27,7 +27,7 @@ jobs:
       - name: Build application
         run: |
           cd api-gateway
-          ./gradlew clean build
+          ./gradlew clean bootWar
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -59,3 +59,28 @@ jobs:
             --tag ghcr.io/${{ env.DOCKER_REPO }}:${{ env.TAG }} \
             --tag ghcr.io/${{ env.DOCKER_REPO }}:latest \
             --push .
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: "${{ env.TAG }}"
+          draft: false
+          prerelease: false
+
+      # Rename the WAR file to Gateway.war
+      - name: Rename WAR file
+        run: mv api-gateway/build/libs/*.war api-gateway/build/libs/Gateway.war
+
+      - name: Upload WAR asset to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: api-gateway/build/libs/Gateway.war
+          asset_name: Gateway.war
+          asset_content_type: application/java-archive
