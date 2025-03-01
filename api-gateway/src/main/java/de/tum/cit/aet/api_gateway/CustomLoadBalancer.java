@@ -27,13 +27,7 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
     private final ProfilePathStore profilePathStore;
 
     /**
-     * Round-robin counter for requests not starting with "/api/".
-     * For instance, this is used for requests to the client or for websocket messages.
-     */
-    private final AtomicInteger generalRRCounter = new AtomicInteger(0);
-
-    /**
-     * Round-robin counters for requests starting with /api/**.
+     * Round-robin counters for each respective module.
      * The key is the respective Spring Profile mapped from the path.
      */
     private final Map<String, AtomicInteger> moduleRRCounter = new ConcurrentHashMap<>();
@@ -74,24 +68,19 @@ public class CustomLoadBalancer implements ReactorServiceInstanceLoadBalancer {
      */
     private ServiceInstance pickBasedOnPath(
             List<ServiceInstance> serviceInstances, String path) {
-        List<ServiceInstance> filteredInstances;
-        AtomicInteger counter;
-
         String requiredProfile = profilePathStore.getProfileByPath(path);
-        if (requiredProfile != null) {
-            filteredInstances = serviceInstances.stream().filter(serviceInstance -> serviceInstance.getMetadata().getOrDefault(profileMetadataKey, "").contains(requiredProfile)).toList();
-            counter = moduleRRCounter.getOrDefault(requiredProfile, new AtomicInteger(0));
-            moduleRRCounter.put(requiredProfile, counter);
-        } else {
-            filteredInstances = serviceInstances;
-            counter = generalRRCounter;
+        List<ServiceInstance> filteredInstances = serviceInstances.
+                stream()
+                .filter(serviceInstance ->
+                        serviceInstance.getMetadata().getOrDefault(profileMetadataKey, "").contains(requiredProfile)
+                ).toList();
+
+        if (!filteredInstances.isEmpty()) {
+            AtomicInteger counter = moduleRRCounter.computeIfAbsent(requiredProfile, k -> new AtomicInteger(0));
+            return selectRoundRobin(filteredInstances, counter);
         }
 
-        if (filteredInstances.isEmpty()) {
-            return null;
-        }
-
-        return selectRoundRobin(filteredInstances, counter);
+        return null;
     }
 
     /**

@@ -1,7 +1,6 @@
 package de.tum.cit.aet.api_gateway;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -29,15 +28,14 @@ public class ProfilePathStore {
      * @param path The path to get the profile for.
      * @return The profile to use for the given path or null if no mapping is found.
      */
-    @Nullable
     public String getProfileByPath(String path) {
         if (path == null || !path.startsWith("/api/")) {
-            return null;
+            return defaultProfile;
         }
 
         String[] slugs = path.split("/");
         if (slugs.length < 3) {
-            return null;
+            return defaultProfile;
         }
 
         String moduleServicePrefix = slugs[2];
