@@ -33,7 +33,8 @@ public class AggregatedProfileResource {
         List<ServiceInstance> serviceInstances = discoveryClient.getInstances(ARTEMIS_SERVICE_ID);
 
         return serviceInstances.stream()
-            .flatMap(serviceInstance -> Arrays.stream(serviceInstance.getMetadata().get(profilePathStore.getDefaultProfile()).split(",")))
+            .flatMap(serviceInstance -> Arrays.stream(serviceInstance.getMetadata().getOrDefault(profilePathStore.getDefaultProfile(), "").split(",")))
+            .filter(profile -> !profile.isEmpty())
             .collect(Collectors.toSet());
     }
 
